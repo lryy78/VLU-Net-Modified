@@ -142,7 +142,7 @@ def add_gaussian_noise(img, sigma):
 def generate_dataset(clean_dir, base_out, dataset_name):
     sigmas = [15, 25, 50]
     images = sorted(os.listdir(clean_dir))
-    clean_folder = os.path.basename(os.path.normpath(clean_dir))
+    clean_folder = "original_png" if dataset_name == "CBSD68" else "clean"
 
     for sigma in sigmas:
         noisy_dir = os.path.join(base_out, f"noisy{sigma}")
