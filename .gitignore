@@ -1,0 +1,16 @@
+# Large data folders - too big for GitHub
+datasets/
+pretrained_ckpt/
+
+# Output and logs
+output/
+lightning_logs/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter checkpoints
+.ipynb_checkpoints/

@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
+import sys
 
 from utils.dataset_utils_clip import PromptTrainDataset, TestDataset_forIR
 from net.Final import VLUNet
@@ -31,7 +32,7 @@ parser.add_argument('--lr', type=float, default=2e-4, help='learning rate of enc
 
 parser.add_argument('--de_type', nargs='+', default=['denoise_15', 'denoise_25', 'denoise_50', 'derain', 'dehaze', 'delowlight', 'deblur'],
                     help='which type of degradations is training and testing for.')
-parser.add_argument('--de_dim', default=7)
+parser.add_argument('--de_dim', type=int, default=7)
 
 parser.add_argument('--patch_size', type=int, default=128, help='patchsize of input.')
 parser.add_argument('--num_workers', type=int, default=16, help='number of workers.')
@@ -60,7 +61,10 @@ parser.add_argument('--is_clip', type=bool,default=True, help='is clip')
 parser.add_argument('--output_path', type=str, default="output/", help='output save path')
 parser.add_argument('--ckpt_path', type=str, default="ckpt/", help='checkpoint save path')
 parser.add_argument('--pretrained_ckpt_path', type=str, default="./pretrained_ckpt/3task_vlunet.ckpt", help='checkpoint save path')
-options = parser.parse_args(args=[])
+if hasattr(sys, 'ps1') or 'ipykernel' in sys.modules:
+    options = parser.parse_args(args=[])
+else:
+    options = parser.parse_args()
 
 options.output_path = os.path.join(options.output_path, options.name)
 options.ckpt_path = os.path.join(options.ckpt_path, options.name)
@@ -244,7 +248,9 @@ def main():
     checkpoint_path = options.pretrained_ckpt_path
     model = DAdunModel.load_from_checkpoint(checkpoint_path)
     
-    trainer = pl.Trainer(accelerator="gpu", devices=1)
+    # trainer = pl.Trainer(accelerator="gpu", devices=1)
+    trainer = pl.Trainer(accelerator="cpu")
+
     trainer.test(model, dataloaders=test_loaders)
 
 if __name__ == '__main__':
